@@ -128,7 +128,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.untitled"
+        applicationId "com.grange.audiorecorder"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -179,6 +179,7 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-audio')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
