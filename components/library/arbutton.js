@@ -1,18 +1,19 @@
 import React from 'react';
-import {Text, TouchableHighlight, StyleSheet} from 'react-native';
+import {Text, TouchableOpacity, StyleSheet} from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const ARButton = ({title, onPress, active}) => {
   let style = active ? styles.activeButtonText : styles.buttonText;
   return (
-    <TouchableHighlight style={styles.button} onPress={onPress}>
-      <Text style={style}>{title}</Text>
-    </TouchableHighlight>
+    <TouchableOpacity style={styles.button} onPress={onPress}>
+      <Icon name={title} size={30} color='white' />
+    </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: '#1e90ff',
+    // backgroundColor: '#1e90ff',
     margin: 10,
     height: 30,
     width: 80,

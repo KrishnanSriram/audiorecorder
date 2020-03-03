@@ -2,14 +2,23 @@ import React from 'react';
 import {
   View,
   Text,
-  Button,
   StyleSheet,
   Platform,
   PermissionsAndroid,
+  ScrollView,
+  ImageBackground,
+  TouchableHighlight,
+  Alert,
 } from 'react-native';
+
 import Sound from 'react-native-sound';
 import {AudioRecorder, AudioUtils} from 'react-native-audio';
 import ARButton from '../library/arbutton';
+import * as RNFS from 'react-native-fs';
+import AudioControls from '../library/audiocontrols';
+import PageControls from '../library/pagecontrols';
+import ProgressLabel from '../library/progresslabel';
+import Footer from '../library/footer';
 
 class HomeScreen extends React.Component {
   //TODO: Move all of this initialization into constructor
@@ -57,7 +66,8 @@ class HomeScreen extends React.Component {
 
   _pause = async () => {
     if (!this.state.recording) {
-      console.warn("Can't pause, not recording!");
+      Alert.alert('AudioRecorder', "Can't pause, not recording!");
+      console.warn("Can't PAUSE, not recording!");
       return;
     }
 
@@ -77,6 +87,7 @@ class HomeScreen extends React.Component {
 
   _stop = async () => {
     if (!this.state.recording) {
+      Alert.alert('AudioRecorder', "Can't STOP, not recording!");
       console.warn("Can't stop, not recording!");
       return;
     }
@@ -108,12 +119,25 @@ class HomeScreen extends React.Component {
           console.log('failed to load the sound', error);
         }
       });
+      if (sound == null || sound._key != 1) {
+        Alert.alert(
+          'AudioRecorder',
+          'Failed to LOAD/PLAY sound. Please RECORD and try again!',
+        );
+        return;
+      }
+      console.log('Sound object is');
+      console.log(sound);
 
       setTimeout(() => {
         sound.play(success => {
           if (success) {
             console.log('successfully finished playing');
           } else {
+            Alert.alert(
+              'AudioRecorder',
+              'Playback failed due to audio decoding errors!',
+            );
             console.log('playback failed due to audio decoding errors');
           }
         });
@@ -123,11 +147,13 @@ class HomeScreen extends React.Component {
 
   _record = async () => {
     if (this.state.recording) {
+      Alert.alert('AudioRecorder', 'Already recording!');
       console.warn('Already recording!');
       return;
     }
 
     if (!this.state.hasPermission) {
+      Alert.alert('AudioRecorder', "Can't RECORD, no permissions granted!");
       console.warn("Can't record, no permission granted!");
       return;
     }
@@ -177,44 +203,74 @@ class HomeScreen extends React.Component {
     });
   }
 
+  checkAndDeleteRecorderFile = async () => {
+    await RNFS.exists(this.state.audioPath)
+      .then(result => {
+        this.removeRecordedFile();
+      })
+      .catch(err => {
+        console.log('ERROR: Failed to check on file');
+      });
+  };
+
+  removeRecordedFile = async () => {
+    await RNFS.unlink(this.state.audioPath)
+      .then(res => {
+        return true;
+      })
+      .catch(err => {
+        console.log(err.message, err.code);
+        return false;
+      });
+    return false;
+  };
+  onTapCancelButton = () => {
+    this.setState({currentTime: 0});
+    this.checkAndDeleteRecorderFile();
+  };
+
+  onTapSaveButton = () => {
+    let new_file_path = this.state.audioPath.replace(
+      'test.aac',
+      new Date().getTime() + 'aac',
+    );
+    RNFS.moveFile(this.state.audioPath, new_file_path)
+      .then(success => {
+        console.log('file moved!');
+        Alert.alert('AudioRecorder', 'File Saved');
+        this.setState({currentTime: 0});
+        this.removeRecordedFile();
+      })
+      .catch(err => {
+        console.log('Error: ' + err.message);
+      });
+  };
+
   render() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.headline}>Audio Recorder</Text>
-        <View
-          style={{
-            borderBottomColor: 'black',
-            borderBottomWidth: 1,
-          }}
-        />
-        <View style={styles.controls}>
-          <View
-            style={{
-              flex: 0.2,
-              flexDirection: 'row',
-              justifyContent: 'space-around',
-              height: 100,
-            }}>
-            <ARButton
-              title="Record"
-              onPress={this._record}
-              active={this.state.recording}
+      <ScrollView>
+        <ImageBackground
+          source={require('./../../assets/grange_office.jpg')}
+          style={styles.backgroundImage}>
+          <View style={styles.container}>
+            <Text style={styles.headline}>Audio Recorder</Text>
+            <AudioControls
+              onRecord={this._record}
+              onStop={this._stop}
+              onPlay={this._play}
+              onBackward={this._pause}
+              onForward={this._pause}
+              recordActive={this.state.recording}
             />
-            <ARButton title="Play" onPress={this._play} />
-            <ARButton title="Stop" onPress={this._stop} />
-            <ARButton title="Pause" onPress={this._pause} />
+            <ProgressLabel currentTime={this.state.currentTime} />
+            <PageControls
+              onCancelButton={this.onTapCancelButton}
+              onSaveButton={this.onTapSaveButton}
+            />
+            <Footer />
           </View>
-          <View
-            style={{
-              flex: 2,
-              flexDirection: 'column',
-              justifyContent: 'flex-start',
-              alignItems: 'center',
-            }}>
-            <Text style={styles.progressText}>{this.state.currentTime}s</Text>
-          </View>
-        </View>
-      </View>
+        </ImageBackground>
+      </ScrollView>
     );
   }
 }
@@ -224,7 +280,8 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'stretch',
     justifyContent: 'center',
-    margin: 20,
+    margin: 0,
+    backgroundColor: 'rgba( 0, 0, 0, 0.6 )',
   },
   controls: {
     justifyContent: 'center',
@@ -235,15 +292,15 @@ const styles = StyleSheet.create({
     fontSize: 44,
     fontWeight: '500',
     textAlign: 'center',
+    color: 'white',
   },
   navigationButton: {
     marginTop: 20,
   },
-  progressText: {
-    paddingTop: 50,
-    fontSize: 50,
-    color: '#000000',
-    textAlign: 'center',
+  backgroundImage: {
+    flex: 1,
+    height: null,
+    width: null,
   },
 });
 

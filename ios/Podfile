@@ -1,8 +1,8 @@
 platform :ios, '9.0'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
-target 'untitled' do
-  # Pods for untitled
+target 'audiorecorder' do
+  # Pods for audiorecorder
   pod 'FBLazyVector', :path => "../node_modules/react-native/Libraries/FBLazyVector"
   pod 'FBReactNativeSpec', :path => "../node_modules/react-native/Libraries/FBReactNativeSpec"
   pod 'RCTRequired', :path => "../node_modules/react-native/Libraries/RCTRequired"
@@ -34,9 +34,7 @@ target 'untitled' do
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
-  pod 'RNAudio', :path => '../node_modules/react-native-audio'
-
-  target 'untitledTests' do
+  target 'audiorecorderTests' do
     inherit! :search_paths
     # Pods for testing
   end
@@ -44,10 +42,10 @@ target 'untitled' do
   use_native_modules!
 end
 
-target 'untitled-tvOS' do
-  # Pods for untitled-tvOS
+target 'audiorecorder-tvOS' do
+  # Pods for audiorecorder-tvOS
 
-  target 'untitled-tvOSTests' do
+  target 'audiorecorder-tvOSTests' do
     inherit! :search_paths
     # Pods for testing
   end
