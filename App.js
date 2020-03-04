@@ -90,28 +90,6 @@ const App = () => {
   );
 };
 
-/*const App = () => {
-  return (
-    <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          headerStyle: {
-            backgroundColor: '#f4511e',
-          },
-          headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-        }}>
-        <Stack.Screen
-          name="Main"
-          component={MainTabNavigator}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
-};*/
-
 const styles = StyleSheet.create({});
 
 export default App;

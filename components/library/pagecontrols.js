@@ -27,21 +27,40 @@ const styles = StyleSheet.create({
   statusButton: {
     margin: 20,
     width: '40%',
-    height: 30,
+    height: 40,
     borderRadius: 5,
   },
   saveButton: {
     backgroundColor: '#4169e1',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: '#ccc',
+    shadowColor: '#ccc',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 1,
+    shadowRadius: 2.49,
   },
   cancelButton: {
-    backgroundColor: '#fa8072',
+    backgroundColor: '#dc143c',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: '#ccc',
+    shadowColor: '#ccc',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 1,
+    shadowRadius: 2.49,
   },
   buttonText: {
     color: 'white',
     textAlign: 'center',
     fontSize: 20,
-    fontWeight: '200',
-    paddingTop: 2,
+    fontWeight: '400',
   },
 });
 

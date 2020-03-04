@@ -13,7 +13,6 @@ import {
 
 import Sound from 'react-native-sound';
 import {AudioRecorder, AudioUtils} from 'react-native-audio';
-import ARButton from '../library/arbutton';
 import * as RNFS from 'react-native-fs';
 import AudioControls from '../library/audiocontrols';
 import PageControls from '../library/pagecontrols';
@@ -119,7 +118,7 @@ class HomeScreen extends React.Component {
           console.log('failed to load the sound', error);
         }
       });
-      if (sound == null || sound._key != 1) {
+      if (sound == null) {
         Alert.alert(
           'AudioRecorder',
           'Failed to LOAD/PLAY sound. Please RECORD and try again!',
@@ -227,12 +226,13 @@ class HomeScreen extends React.Component {
   onTapCancelButton = () => {
     this.setState({currentTime: 0});
     this.checkAndDeleteRecorderFile();
+    this.props.navigation.goBack();
   };
 
   onTapSaveButton = () => {
     let new_file_path = this.state.audioPath.replace(
       'test.aac',
-      new Date().getTime() + 'aac',
+      new Date().getTime() + '.aac',
     );
     RNFS.moveFile(this.state.audioPath, new_file_path)
       .then(success => {
@@ -243,7 +243,9 @@ class HomeScreen extends React.Component {
       })
       .catch(err => {
         console.log('Error: ' + err.message);
+        Alert.alert('AudioRecorder', 'Failed to save recorded passage. Please try again!');
       });
+
   };
 
   render() {
@@ -258,8 +260,6 @@ class HomeScreen extends React.Component {
               onRecord={this._record}
               onStop={this._stop}
               onPlay={this._play}
-              onBackward={this._pause}
-              onForward={this._pause}
               recordActive={this.state.recording}
             />
             <ProgressLabel currentTime={this.state.currentTime} />
@@ -281,7 +281,7 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
     justifyContent: 'center',
     margin: 0,
-    backgroundColor: 'rgba( 0, 0, 0, 0.6 )',
+    backgroundColor: 'rgba( 0, 0, 0, 0.5 )',
   },
   controls: {
     justifyContent: 'center',
@@ -289,8 +289,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   headline: {
+    marginTop: 20,
     fontSize: 44,
-    fontWeight: '500',
+    fontWeight: '200',
     textAlign: 'center',
     color: 'white',
   },

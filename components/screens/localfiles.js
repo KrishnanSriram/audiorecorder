@@ -1,4 +1,4 @@
-import React, {Component, useState, useEffect, useLayoutEffect, } from 'react';
+import React, {Component, useState, useEffect, useLayoutEffect} from 'react';
 import {
   View,
   Text,
@@ -15,33 +15,73 @@ import * as RNFS from 'react-native-fs';
 import {AudioUtils} from 'react-native-audio';
 import CardView from 'react-native-cardview';
 
-const LocalFilesListScreen = ({ navigation }) => {
+const LocalFilesListScreen = ({navigation}) => {
   const [filesList, setFilesList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
   useEffect(() => {
-    setLoading(true);
-    fetchFilesList();
-    setLoading(false);
-    return () => {
-      setFilesList(null);
-    };
-  }, []);
+    const unsubscribe = navigation.addListener('focus', () => {
+      console.log('LOCALFILE: In Focus, now');
+      setLoading(true);
+      fetchFilesList();
+      setLoading(false);
+      return () => {
+        setFilesList(null);
+      };
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   useLayoutEffect(() => {
     console.log('useLayoutEffect FIRED');
     navigation.setOptions({
       headerRight: () => (
-        <TouchableHighlight style={{marginRight: 10}} onPress={() => navigation.navigate("Home")}>
-          <Text style={{color: 'white', fontWeight: '600', fontSize: 16}}>Record</Text>
+        <TouchableHighlight
+          style={{marginRight: 10}}
+          onPress={() => navigation.navigate('Home')}>
+          <Text style={{color: 'white', fontWeight: '600', fontSize: 16}}>
+            Record
+          </Text>
         </TouchableHighlight>
       ),
     });
   }, [navigation]);
 
+  const flatListHeader = () => {
+    return (
+      <View
+        style={{
+          height: 100,
+          width: '100%',
+          margin: 10,
+          alignSelf: 'center',
+          marginBottom: 30,
+        }}>
+        <Text
+          style={{
+            fontWeight: '100',
+            flex: 1,
+            alignSelf: 'center',
+            paddingTop: 30,
+            fontSize: 40,
+          }}>
+          Local records
+        </Text>
+      </View>
+    );
+  };
+
   const NoLocalFiles = () => {
     return (
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', margin: 40,}}>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          margin: 40,
+        }}>
         <Text style={{fontSize: 20, color: 'black', fontWeight: '500'}}>
           Loading....please wait!
         </Text>
@@ -63,21 +103,39 @@ const LocalFilesListScreen = ({ navigation }) => {
   if (loading === true || filesList == undefined) {
     return <NoLocalFiles />;
   }
-  console.log("Files list count - ", filesList);
+  console.log('Files list count - ', filesList);
   return (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <FlatList
+      <FlatList style={{width: '100%', }}
+        ListHeaderComponent={flatListHeader}
         getItemCount={filesList.count}
         data={filesList}
         renderItem={({item}) => {
           console.log(item);
           return (
-            <CardView
-              cornerRadius={5} style={{margin: 10, border: 1, borderColor: '#ccc', borderWidth: 1, padding: 10}} key={item.name}>
+            <View
+              style={{
+                height: 120,
+                width: '95%',
+                backgroundColor: '#fff',
+                border: 2.9,
+                borderColor: 'black',
+                alignSelf: 'center',
+                shadowColor: '#ccc',
+                shadowOffset: {
+                  width: 0,
+                  height: 6,
+                },
+                shadowOpacity: 1,
+                shadowRadius: 7.49,
+                padding: 10,
+                marginBottom: 10,
+              }}
+              key={item.name}>
               <Text style={styles.name}>{item.name}</Text>
-              <Text style={styles.name}>{item.size} Bytes</Text>
-              <Text style={styles.name}>{item.ctime.toString()}</Text>
-            </CardView>
+              <Text style={styles.size}>{item.size} Bytes</Text>
+              <Text style={styles.ctime}>{item.ctime.toString()}</Text>
+            </View>
           );
         }}
       />
@@ -100,9 +158,20 @@ const styles = StyleSheet.create({
   name: {
     fontFamily: 'Verdana',
     fontSize: 18,
+    fontWeight: '600',
+    padding: 5,
   },
-  email: {
-    color: 'red',
+  size: {
+    color: 'gray',
+    fontSize: 16,
+    fontWeight: '500',
+    padding: 5,
+  },
+  ctime: {
+    color: 'gray',
+    fontSize: 15,
+    fontWeight: '400',
+    padding: 5,
   },
 });
 

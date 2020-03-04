@@ -6,8 +6,6 @@ const AudioControls = ({
   onRecord,
   onPlay,
   onStop,
-  onBackward,
-  onForward,
   recordActive,
 }) => {
   return (
@@ -15,8 +13,6 @@ const AudioControls = ({
       <ARButton title="microphone" onPress={onRecord} active={recordActive} />
       <ARButton title="play" onPress={onPlay} />
       <ARButton title="stop" onPress={onStop} />
-      <ARButton title="step-backward" onPress={onBackward} />
-      <ARButton title="step-forward" onPress={onForward} />
     </View>
   );
 };

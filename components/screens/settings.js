@@ -6,8 +6,7 @@ const SettingsItem = ({title, value}) => {
     <View
       style={{
         flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-evenly',
+        alignItems: 'flex-start',
       }}>
       <Text style={styles.item}>{title}</Text>
       <Text style={styles.value}>{value}</Text>
@@ -59,22 +58,30 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10,
     paddingBottom: 2,
-    fontSize: 22,
-    fontWeight: 'bold',
+    fontSize: 25,
+    fontWeight: '600',
     backgroundColor: 'rgba(247,247,247,1.0)',
+    height: 50,
+    textAlignVertical: 'center',
   },
   item: {
     padding: 10,
     fontSize: 18,
     height: 44,
     fontWeight: '500',
+    textAlign: 'left',
+    width: '35%',
   },
   value: {
     padding: 2,
     marginLeft: 20,
     marginTop: 11,
+    marginRight: 10,
     fontSize: 15,
     height: 44,
+    fontWeight: '300',
+    textAlign: 'left',
+    width: '65%',
   },
 });
 
